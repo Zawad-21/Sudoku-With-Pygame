@@ -87,11 +87,15 @@ def make_groups():
 
 
 def generate_rand_cell_indices():
-    rand_cell_indices = []
-    while len(rand_cell_indices) < 17:
-        random_number = random.randint(0, 80)
-        if random_number not in rand_cell_indices:
-            rand_cell_indices.append(random_number)
+    # rand_cell_indices = []
+    # while len(rand_cell_indices) < 17:
+    #     random_number = random.randint(0, 80)
+    #     if random_number not in rand_cell_indices:
+    #         rand_cell_indices.append(random_number)
+    # print(rand_cell_indices)
+    # return rand_cell_indices
+    rand_cell_indices = ["5", "3", ".", ".", "7", ".", ".", ".", ".", "6", ".", ".", "1", "9", "5", ".", ".", ".", ".", "9", "8", ".", ".", ".", ".", "6", ".", "8", ".", ".", ".", "6", ".", ".", ".", "3", "4", ".", ".",
+                         "8", ".", "3", ".", ".", "1", "7", ".", ".", ".", "2", ".", ".", ".", "6", ".", "6", ".", ".", ".", ".", "2", "8", ".", ".", ".", ".", "4", "1", "9", ".", ".", "5", ".", ".", ".", ".", "8", ".", ".", "7", "9"]
 
     return rand_cell_indices
 
@@ -99,11 +103,10 @@ def generate_rand_cell_indices():
 def fill_clue_cells(grid):
     grid = grid
     rand_cell_indices = generate_rand_cell_indices()
-    for i in rand_cell_indices:
-        random_number = int(random.random() * 9)
-        cell = grid[i]
-        cell.number = str(random_number)
-        cell.pre_added = True
+    for count, i in enumerate(rand_cell_indices):
+        cell = grid[count]
+        if i != ".": cell.number = str(i)
+        if i != ".": cell.pre_added = True
         cell.text_color = BLUE
         cell.write_num()
 
@@ -165,7 +168,6 @@ def main(state):
 
             if typing and not cell.pre_added and event.type == pygame.KEYDOWN:
                 player_input = pygame.key.name(event.key)
-                print(player_input)
                 input_num = re.findall(r'\d+', player_input)
                 if input_num:
                     cell.erase_num()
