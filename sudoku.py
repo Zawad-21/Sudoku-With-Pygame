@@ -3,6 +3,8 @@ import math
 import random
 import re
 import pygame
+import csv
+
 pygame.font.init()
 
 WIN_WIDTH = 900
@@ -87,26 +89,25 @@ def make_groups():
 
 
 def generate_rand_cell_indices():
-    # rand_cell_indices = []
-    # while len(rand_cell_indices) < 17:
-    #     random_number = random.randint(0, 80)
-    #     if random_number not in rand_cell_indices:
-    #         rand_cell_indices.append(random_number)
-    # print(rand_cell_indices)
-    # return rand_cell_indices
-    rand_cell_indices = ["5", "3", ".", ".", "7", ".", ".", ".", ".", "6", ".", ".", "1", "9", "5", ".", ".", ".", ".", "9", "8", ".", ".", ".", ".", "6", ".", "8", ".", ".", ".", "6", ".", ".", ".", "3", "4", ".", ".",
-                         "8", ".", "3", ".", ".", "1", "7", ".", ".", ".", "2", ".", ".", ".", "6", ".", "6", ".", ".", ".", ".", "2", "8", ".", ".", ".", ".", "4", "1", "9", ".", ".", "5", ".", ".", ".", ".", "8", ".", ".", "7", "9"]
+    file = open('test.csv')
+    csv_reader = csv.reader(file)
+    rows = []
+    for row in csv_reader:
+        rows.append(row[0])
 
-    return rand_cell_indices
+    cell_indices = rows[1:]
+
+    return cell_indices
 
 
 def fill_clue_cells(grid):
     grid = grid
-    rand_cell_indices = generate_rand_cell_indices()
-    for count, i in enumerate(rand_cell_indices):
+    random_number = random.randint(0,9)
+    cell_indices = generate_rand_cell_indices()[random_number]
+    for count, i in enumerate(cell_indices):
         cell = grid[count]
-        if i != ".": cell.number = str(i)
-        if i != ".": cell.pre_added = True
+        if i != "0": cell.number = i
+        if i != "0": cell.pre_added = True
         cell.text_color = BLUE
         cell.write_num()
 
