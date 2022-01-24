@@ -40,7 +40,7 @@ class Cell:
 
     def write_num(self):
         num = FONT.render(self.number, True, self.text_color)
-        WIN.blit(num, (self.x + 37, self.y + 37))
+        WIN.blit(num, (self.x + 37, self.y + 30))
 
     def erase_num(self):
         pygame.draw.rect(WIN, WHITE, (self.x + 7, self.y + 7,
@@ -69,23 +69,41 @@ def make_grid(cell_count, box_width):
 
 
 def make_groups():
+    # groups = []
+    # start = 0
+    # end = 3
+    # for i in range(9):
+    #     groups.append([])
+    #     for j in range(start, end):
+    #         indices = [j, j+9, j+9*2]
+    #         for index in indices:
+    #             groups[i].append(index)
+    #     if end != 9 and end != 36:
+    #         start = start + 3
+    #         end = end + 3
+    #     else:
+    #         start = start + 21
+    #         end = end + 21
+    # print(groups)
+
+    # return groups
     groups = []
     start = 0
     end = 3
-    for i in range(9):
-        groups.append([])
+    while len(groups) < 9:
+        indices = []
         for j in range(start, end):
-            indices = [j, j+9, j+9*2]
-            for index in indices:
-                groups[i].append(index)
+            indices.append(j)
+            indices.append(j + 9)
+            indices.append(j + 9*2)
+        groups.append(indices)
         if end != 9 and end != 36:
             start = start + 3
             end = end + 3
         else:
             start = start + 21
             end = end + 21
-
-    return groups
+    print(groups)
 
 
 def generate_rand_cell_indices():
@@ -102,12 +120,14 @@ def generate_rand_cell_indices():
 
 def fill_clue_cells(grid):
     grid = grid
-    random_number = random.randint(0,9)
+    random_number = random.randint(0, 9)
     cell_indices = generate_rand_cell_indices()[random_number]
     for count, i in enumerate(cell_indices):
         cell = grid[count]
-        if i != "0": cell.number = i
-        if i != "0": cell.pre_added = True
+        if i != "0":
+            cell.number = i
+        if i != "0":
+            cell.pre_added = True
         cell.text_color = BLUE
         cell.write_num()
 
