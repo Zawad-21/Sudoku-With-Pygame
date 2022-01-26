@@ -103,7 +103,6 @@ def make_groups():
         else:
             start = start + 21
             end = end + 21
-    print(groups)
 
 
 def generate_rand_cell_indices():
@@ -132,10 +131,16 @@ def fill_clue_cells(grid):
         cell.write_num()
 
 
-def get_clicked_index(pos):
-    x, y = pos
+def get_row_and_column(values):
+    x, y = values
     column = math.floor(x / 100)
     row = math.floor(y / 100)
+    
+    return(row, column)
+
+
+def get_clicked_index(pos):
+    row, column = get_row_and_column(pos)
 
     return(column + row * 9)
 
