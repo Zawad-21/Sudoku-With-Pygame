@@ -1,4 +1,4 @@
-from math import sqrt
+from math import ceil, sqrt
 import math
 import random
 import re
@@ -15,11 +15,10 @@ pygame.display.set_caption('Sudoku')
 
 WHITE = (245, 245, 245)
 BLACK = (10, 10, 10)
-BLUE = (25, 25, 112)
 GREEN = (0, 100, 0)
 RED = (245, 0, 0)
 
-FONT = pygame.font.Font('freesansbold.ttf', 50)
+FONT = pygame.font.Font(pygame.font.get_default_font(), 50)
 
 LINE_THICKNESS = 2
 
@@ -36,11 +35,11 @@ class Cell:
         self.y = int(y * 100)
         self.number = ''
         self.pre_added = False
-        self.text_color = BLUE
+        self.text_color = BLACK
 
     def write_num(self):
         num = FONT.render(self.number, True, self.text_color)
-        WIN.blit(num, (self.x + 37, self.y + 30))
+        WIN.blit(num, (self.x + 37, self.y + 20))
 
     def erase_num(self):
         pygame.draw.rect(WIN, WHITE, (self.x + 7, self.y + 7,
@@ -69,24 +68,6 @@ def make_grid(cell_count, box_width):
 
 
 def make_groups():
-    # groups = []
-    # start = 0
-    # end = 3
-    # for i in range(9):
-    #     groups.append([])
-    #     for j in range(start, end):
-    #         indices = [j, j+9, j+9*2]
-    #         for index in indices:
-    #             groups[i].append(index)
-    #     if end != 9 and end != 36:
-    #         start = start + 3
-    #         end = end + 3
-    #     else:
-    #         start = start + 21
-    #         end = end + 21
-    # print(groups)
-
-    # return groups
     groups = []
     start = 0
     end = 3
@@ -127,7 +108,7 @@ def fill_clue_cells(grid):
             cell.number = i
         if i != "0":
             cell.pre_added = True
-        cell.text_color = BLUE
+        cell.text_color = BLACK
         cell.write_num()
 
 
@@ -135,7 +116,7 @@ def get_row_and_column(values):
     x, y = values
     column = math.floor(x / 100)
     row = math.floor(y / 100)
-    
+
     return(row, column)
 
 
@@ -162,6 +143,55 @@ def draw_grid_borders(win, total_rows, box_width, win_width):
                              (j * row_gap * 3, win_width), LINE_THICKNESS * 2)
 
 
+# checks if the number is already in the same column
+def check_column(cell, grid_index, grid):
+    duplicate_exists = False
+    index = grid_index
+    number = cell.number
+    grid = grid
+    column = []
+    original = grid_index
+    while index-9 >= 0:
+        column.append(index-9)
+        index = index-9
+    while index+9 <= 80:
+        column.append(index+9)
+        index = index+9
+    column = list(dict.fromkeys(column))
+    if original in column:
+        column.remove(original)
+    for i in column:
+        if grid[i].number == number:
+            duplicate_exists = True
+            break
+    return duplicate_exists
+
+
+# checks if the number is already in the same row
+def check_row(cell, grid_index, grid):
+    duplicate_exists = False
+    index = grid_index
+    number = cell.number
+    grid = grid
+    row = []
+    original = grid_index
+    while index % 9 != 0:
+        row.append(index-1)
+        index = index-1
+    while (index+1) % 9 != 0:
+        row.append(index+1)
+        index = index+1
+    row = list(dict.fromkeys(row))
+    print(row)
+    if original in row:
+        row.remove(original)
+    for i in row:
+        if grid[i].number == number:
+            duplicate_exists = True
+            break
+    return duplicate_exists
+
+
 def draw_window():
     pygame.display.update()
 
@@ -171,6 +201,7 @@ def main(state):
     draw_grid_borders(WIN, int(sqrt(CELL_COUNT)), BOX_WIDTH, WIN_WIDTH)
     typing = False
     cell = None
+    grid_index = None
     prev_cell = None
     draw_window()
     make_groups()
@@ -198,7 +229,12 @@ def main(state):
                 if input_num:
                     cell.erase_num()
                     cell.number = str(input_num[0])
-                    cell.text_color = GREEN
+                    duplicate_in_column = check_column(cell, grid_index, grid)
+                    duplicate_in_row = check_row(cell, grid_index, grid)
+                    if duplicate_in_column or duplicate_in_row:
+                        cell.text_color = RED
+                    else:
+                        cell.text_color = GREEN
                     cell.write_num()
                 elif event.key == pygame.K_BACKSPACE:
                     cell.erase_num()
